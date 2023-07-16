@@ -81,8 +81,13 @@
                     <div class="episode-card-list">
                         <div class="episode-card-item" v-for="(item, index) in season.episodes" :key="index">
                             <div @click="ItemPlayer(item, index)" class="episode-img">
+                                <n-tag :color="{ color: '#f0a020', textColor: '#fff', borderColor: '#f0a020' }"
+                                    class="date-tag">
+                                    {{ item.air_date }}
+                                </n-tag>
                                 <img loading="lazy"
-                                    :src='COMMON.imgUrl + "/t/p/w710_and_h400_multi_faces" + item.still_path' alt="">
+                                    :src='item.still_path ? `${COMMON.imgUrl}/t/p/w710_and_h400_multi_faces${item.still_path}` : "https://www.themoviedb.org/assets/2/v4/glyphicons/basic/glyphicons-basic-38-picture-grey-c2ebdbb057f2a7614185931650f8cee23fa137b93812ccb132b9df511df1cfac.svg"'
+                                    alt="">
                             </div>
                             <div class="episode-content">
                                 <div class="episode-name">
@@ -104,11 +109,11 @@
                             <div class="episode-buttons">
                                 <n-tooltip trigger="hover">
                                     <template #trigger>
-                                              <button @click="PlayEpisod(index + 1)" :class="['detailButton', 'circleButton']">
-                                        <span class="button-icon">
-                                            <i class='bx bxs-right-arrow'></i>
-                                        </span>
-                                    </button>
+                                        <button @click="PlayEpisod(index + 1)" :class="['detailButton', 'circleButton']">
+                                            <span class="button-icon">
+                                                <i class='bx bxs-right-arrow'></i>
+                                            </span>
+                                        </button>
                                     </template>
                                     播放
                                 </n-tooltip>
@@ -350,12 +355,12 @@ export default {
             // 处理url里的特殊字符
             const arr = []
             if (url) {
-              const paths = url.split('/')
-              if (Array.isArray(paths)) {
-              paths.map((path)=>{
-                arr.push(encodeURIComponent(path))
-              })
-              }
+                const paths = url.split('/')
+                if (Array.isArray(paths)) {
+                    paths.map((path) => {
+                        arr.push(encodeURIComponent(path))
+                    })
+                }
             }
             this.url = this.alist_host + arr.join('/');
             this.showModal = !this.showModal;
@@ -587,10 +592,20 @@ span.button-text {
     font-size: 1.2em;
 }
 
+.episode-img {
+    position: relative;
+}
+
 .episode-img img {
     border-radius: 4px;
     width: 100%;
     aspect-ratio: 16/11;
+}
+
+.episode-img .date-tag {
+    position: absolute;
+    top: 5px;
+    left: 5px;
 }
 
 .episode-name {

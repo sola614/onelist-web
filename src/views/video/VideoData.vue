@@ -23,8 +23,11 @@
                     Math.floor(data.vote_average * 100) / 100
                   }}
                 </div>
-                <div class="mediaInfoItem">{{ data.release_date }}</div>
-                <div class="mediaInfoItem mediaInfoOfficialRating">{{ data.OfficialRating ?
+                <div class="mediaInfoItem">
+                  <template v-if="data.release_date">上映时间：{{ data.release_date }}</template>
+                  <template v-if="data.last_air_date">最新播放时间：{{ data.last_air_date }}</template>
+                </div>
+                <div class="mediaInfoItem mediaInfoOfficialRating" v-if="data.OfficialRating">{{ data.OfficialRating ?
                   data.OfficialRating : "-"
                 }}</div>
                 <div class="mediaInfoItem tag-list">
@@ -118,6 +121,9 @@
                     }
                   }">
                     <div class="show-img">
+                      <n-tag class="year-tag" :color="{ color: '#f0a020', textColor: '#fff', borderColor: '#f0a020' }">
+                        {{ handleVideoYear(item.air_date) }}
+                      </n-tag>
                       <img :src='COMMON.imgUrl + "/t/p/w220_and_h330_face/" + item.poster_path' alt="">
                     </div>
                   </router-link>
@@ -334,7 +340,7 @@
 <script>
 import { getCurrentInstance, onMounted, ref } from "vue";
 import { onBeforeRouteUpdate } from 'vue-router';
-import { handleShowNewBadge } from '@/utils'
+import { handleShowNewBadge, handleVideoYear } from '@/utils'
 export default {
   name: 'VideoData',
   setup() {
@@ -452,6 +458,7 @@ export default {
 
     return {
       handleShowNewBadge,
+      handleVideoYear,
       id,
       title,
       titleModal,
@@ -853,10 +860,20 @@ span.button-text {
   font-size: 1.2em;
 }
 
+.show-img {
+  position: relative;
+}
+
 .show-img img {
   border-radius: 4px;
   width: 160px;
   aspect-ratio: 11/16;
+}
+
+.year-tag {
+  position: absolute;
+  top: 5px;
+  left: 5px;
 }
 
 .show-name {

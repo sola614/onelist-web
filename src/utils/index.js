@@ -1,4 +1,4 @@
-export function timeFormat(time,format) {
+export function timeFormat(time, format) {
   var date = new Date(time)
   var y = date.getFullYear(),
     m = date.getMonth() + 1,
@@ -29,9 +29,12 @@ export function timeFormat(time,format) {
 export function handleShowNewBadge(time) {
   let flag = false
   if (time) {
-    const date = timeFormat(time,'YYYY-MM-DD')
-    const nowDate=timeFormat(new Date(),'YYYY-MM-DD')
+    const date = timeFormat(time, 'YYYY-MM-DD')
+    const nowDate = timeFormat(new Date(), 'YYYY-MM-DD')
     flag = date === nowDate
   }
   return flag
+}
+export function handleVideoYear(time) {
+  return time ? timeFormat(time, 'YYYY') : ''
 }

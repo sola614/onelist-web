@@ -24,10 +24,18 @@
                                         Math.floor(data.vote_average * 100) / 100
                                     }}
                                 </div>
-                                <div class="mediaInfoItem">{{ data.release_date }}</div>
-                                <div class="mediaInfoItem mediaInfoOfficialRating">{{ data.OfficialRating ?
+                                <div class="mediaInfoItem">
+                                    <template v-if="data.release_date">上映时间：{{ data.release_date }}</template>
+                                    <template v-if="data.last_air_date">最新播放时间：{{ data.last_air_date }}</template>
+                                </div>
+                                <div class="mediaInfoItem mediaInfoOfficialRating" v-if="data.OfficialRating">{{
+                                    data.OfficialRating ?
                                     data.OfficialRating : "-"
                                 }}</div>
+                                <!-- <div class="mediaInfoItem">{{ data.release_date }}</div>
+                                <div class="mediaInfoItem mediaInfoOfficialRating">{{ data.OfficialRating ?
+                                    data.OfficialRating : "-"
+                                }}</div> -->
                                 <div class="mediaInfoItem tag-list">
                                     <div class="tag-item" v-for="(item, index) in data.genres" :key="index">
                                         {{ item.name }}

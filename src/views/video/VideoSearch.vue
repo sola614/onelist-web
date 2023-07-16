@@ -21,11 +21,12 @@
                     <n-button @click="showSort = !showSort" strong secondary circle>
                         <i class='bx bx-filter'></i>
                     </n-button>
+                    &lt;-提示：如果得不到想要的结果，可尝试切换分类搜索
                 </div>
             </div>
         </div>
         <div class="card-show-content view-card-list">
-            <div class="view-item" v-for="(item, index) in data" :key="index">
+            <div class="view-item" v-for="(item, index) in data" :key="index" v-if="data && data.length > 0">
                 <router-link :to="{
                     path: '/video', query: {
                         id: item.id,
@@ -34,15 +35,21 @@
                 }">
                     <div class="view-item-header">
                         <div class="view-item-tag-list">
-                            <div class="view-item-tag rating">{{ isNaN(Math.floor(item.vote_average * 100) / 100) ?
-                                "" :
-                                Math.floor(item.vote_average * 100) / 100
-                            }}
-                            </div>
-                            <div v-if="item.played" class="view-item-tag count">
-                                <i class='bx bx-check'></i>
+                            <n-tag class="view-item-tag"
+                                :color="{ color: '#f0a020', textColor: '#fff', borderColor: '#f0a020' }">
+                                {{ isNaN(Math.floor(item.vote_average * 100) / 100) ?
+                                    "" :
+                                    Math.floor(item.vote_average * 100) / 100
+                                }}
+                            </n-tag>
+                            <div class="flex-row">
+                                <div v-if="item.played" class="view-item-tag count" title="已播放">
+                                    <i class='bx bx-check'></i>
+                                </div>
+                                <n-badge value="New" v-if="handleShowNewBadge(item.updated_at)" class="new-badge"></n-badge>
                             </div>
                         </div>
+
                     </div>
                     <img loading="lazy" class="carousel-img"
                         :src='COMMON.imgUrl + "/t/p/w220_and_h330_face/" + item.poster_path'>
@@ -54,6 +61,7 @@
                     </div>
                 </router-link>
             </div>
+            <div v-else>暂无数据</div>
         </div>
         <n-modal v-model:show="showSort" transform-origin="center">
             <n-card style="width: 600px;" title="选择分类" :bordered="false" size="huge" role="dialog" aria-modal="true">
@@ -82,7 +90,7 @@
 <script>
 import { getCurrentInstance, onMounted, ref } from "vue";
 import { onBeforeRouteUpdate } from 'vue-router';
-
+import { handleShowNewBadge } from '@/utils'
 export default {
     name: "VideoSearch",
     setup() {
@@ -106,7 +114,7 @@ export default {
             per_card.value = 3;
         }
         const pageText = ref(null);
-        data_type.value = "movie";
+        data_type.value = "tv";
         mode.value = data_type.value
         q.value = proxy.$route.query.q;
 
@@ -156,6 +164,7 @@ export default {
         });
 
         return {
+            handleShowNewBadge,
             data_type,
             per_card,
             data,

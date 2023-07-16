@@ -132,13 +132,13 @@
 
                 <template #footer>
                     <n-space justify="end" size="medium">
-                        <n-button @click="Delete()" type="warning">
+                        <n-button @click="Delete()" type="warning" :loading="btnLoading">
                             <template #icon>
                                 <i class='bx bx-trash'></i>
                             </template>
                             删除
                         </n-button>
-                        <n-button @click="Update()" type="info">
+                        <n-button @click="Update()" type="info" :loading="btnLoading">
                             <template #icon>
                                 <i class='bx bx-save'></i>
                             </template>
@@ -161,7 +161,7 @@
                 </n-form-item>
                 <template #footer>
                     <n-space justify="end" size="medium">
-                        <n-button @click="ReNewWork()" type="info">
+                        <n-button @click="ReNewWork()" type="info" :loading="btnLoading">
                             <template #icon>
                                 <i class='bx bx-check'></i>
                             </template>
@@ -180,6 +180,7 @@ export default {
     name: 'WorkIndex',
     setup() {
         const loading = ref(true);
+        const btnLoading = ref(false)
         const show = ref(false);
         const allFile = ref(false);
         const showModal = ref(false);
@@ -231,6 +232,7 @@ export default {
             fetchData();
         });
         return {
+            btnLoading,
             allFile,
             data,
             error,
@@ -289,12 +291,17 @@ export default {
             this.Request(this.COMMON.apiUrl + '/v1/api/work/renew?id=' + this.work.id + "&mod=" + mod, {})
         },
         Request(api, data) {
+            if (this.btnLoading) {
+                return
+            }
+            this.btnLoading = true
             this.axios.post(api, data, {
                 headers: {
                     'content-type': 'application/json',
                     'Authorization': this.$cookies.get("Authorization")
                 }
             }).then(res => {
+                this.btnLoading = false
                 if (res.data.code == 200) {
                     this.COMMON.ShowMsg(res.data.msg)
                     this.showModal = false;
@@ -305,6 +312,7 @@ export default {
                     this.COMMON.ShowMsg(res.data.msg)
                 }
             }).catch((error) => {
+                this.btnLoading = false
                 this.COMMON.ShowMsg(error);
             });
         },

@@ -25,7 +25,8 @@
     "vue-axios": "^3.2.4",
     "vue-cookies": "^1.7.4",
     "vue-router": "^4.0.9",
-    "vue-template-compiler": "^2.6.14"
+    "vue-template-compiler": "^2.6.14",
+    "yarn": "^1.22.19"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "^5.0.8",

@@ -34,13 +34,26 @@
                 }">
                     <div class="view-item-header">
                         <div class="view-item-tag-list">
-                            <div class="view-item-tag rating">{{ isNaN(Math.floor(item.vote_average * 100) / 100) ?
+                            <!-- <div class="view-item-tag rating">{{ isNaN(Math.floor(item.vote_average * 100) / 100) ?
                                 "" :
                                 Math.floor(item.vote_average * 100) / 100
                             }}
                             </div>
                             <div v-if="item.played" class="view-item-tag count">
                                 <i class='bx bx-check'></i>
+                            </div> -->
+                            <n-tag class="view-item-tag"
+                                :color="{ color: '#f0a020', textColor: '#fff', borderColor: '#f0a020' }">
+                                {{ isNaN(Math.floor(item.vote_average * 100) / 100) ?
+                                    "" :
+                                    Math.floor(item.vote_average * 100) / 100
+                                }}
+                            </n-tag>
+                            <div class="flex-row">
+                                <div v-if="item.played" class="view-item-tag count" title="已播放">
+                                    <i class='bx bx-check'></i>
+                                </div>
+                                <n-badge value="New" v-if="handleShowNewBadge(item.updated_at)" class="new-badge"></n-badge>
                             </div>
                         </div>
                     </div>
@@ -82,6 +95,7 @@
 <script>
 import { getCurrentInstance, onMounted, ref } from "vue";
 import { onBeforeRouteUpdate } from 'vue-router';
+import { handleShowNewBadge } from '@/utils'
 
 export default {
     name: "UserHeart",
@@ -132,7 +146,7 @@ export default {
                 }
 
             }).catch((error) => {
-               proxy.COMMON.ShowMsg(error);
+                proxy.COMMON.ShowMsg(error);
             });
 
         }
@@ -150,6 +164,7 @@ export default {
         });
 
         return {
+            handleShowNewBadge,
             data_type,
             per_card,
             data,
@@ -187,7 +202,7 @@ export default {
         }
     },
     methods: {
-       BackPage() {
+        BackPage() {
             this.page = this.page - 1;
             if (this.page <= 0) {
                 this.COMMON.ShowMsg("已经是第1页啦!")

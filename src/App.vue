@@ -160,7 +160,8 @@
                                         <i class='bx bx-x'></i>
                                     </n-button>
                                 </template>
-                                <n-input @keyup.enter="Search()" v-model:value="q" type="text" size="large" placeholder="">
+                                <n-input @keyup.enter="Search()" v-model:value="searchKey" type="text" size="large"
+                                    placeholder="">
                                     <template #prefix>
                                         <i class='bx bx-search'></i>
                                     </template>
@@ -325,7 +326,7 @@ export default defineComponent({
             theme,
             data,
             showSaerch,
-            q: ref(null),
+            searchKey: ref(null),
             reF,
             reFApp,
             options: [
@@ -348,12 +349,14 @@ export default defineComponent({
     },
     methods: {
         Search() {
+            this.showSaerch = false
             this.$router.push({
                 path: "/search",
                 query: {
-                    q: this.q
+                    q: decodeURIComponent(this.searchKey)
                 }
             })
+            this.searchKey = ''
         },
         Home() {
             this.$router.push({
@@ -590,6 +593,25 @@ span.n-avatar {
 
 .n-layout-footer {
     text-align: center;
+}
+
+.flex-row {
+    display: flex;
+    flex-direction: row;
+}
+
+.tag-box {
+    justify-content: flex-end;
+}
+
+.new-badge {
+    margin-left: 5px;
+    align-items: center;
+    margin-top: 5px;
+}
+
+.view-item-tag.count+.new-badge {
+    margin-top: 0;
 }
 </style>
 

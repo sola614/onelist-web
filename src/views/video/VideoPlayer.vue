@@ -17,7 +17,7 @@
                             </div>
                         </div>
                         <div class="header-right">
-                            <n-button @click="showModal = !showModal" strong secondary circle>
+                            <n-button @click="OutsidePlay" strong secondary circle>
                                 <i class='bx bx-dots-vertical-rounded'></i>
                             </n-button>
                         </div>
@@ -104,7 +104,7 @@
                                     }">
                                         <div class="view-item-header">
                                             <div class="view-item-tag-list">
-                                                <div class="view-item-tag rating">{{ isNaN(Math.floor(item.vote_average *
+                                                <!-- <div class="view-item-tag rating">{{ isNaN(Math.floor(item.vote_average *
                                                     100) / 100) ?
                                                     "" :
                                                     Math.floor(item.vote_average * 100) / 100
@@ -112,6 +112,20 @@
                                                 </div>
                                                 <div v-if="item.played" class="view-item-tag count">
                                                     <i class='bx bx-check'></i>
+                                                </div> -->
+                                                <n-tag class="view-item-tag"
+                                                    :color="{ color: '#f0a020', textColor: '#fff', borderColor: '#f0a020' }">
+                                                    {{ isNaN(Math.floor(item.vote_average * 100) / 100) ?
+                                                        "" :
+                                                        Math.floor(item.vote_average * 100) / 100
+                                                    }}
+                                                </n-tag>
+                                                <div class="flex-row">
+                                                    <div v-if="item.played" class="view-item-tag count" title="已播放">
+                                                        <i class='bx bx-check'></i>
+                                                    </div>
+                                                    <n-badge value="New" v-if="handleShowNewBadge(item.updated_at)"
+                                                        class="new-badge"></n-badge>
                                                 </div>
                                             </div>
                                         </div>
@@ -209,7 +223,7 @@
                 </template>
                 <ul class="play-list">
                     <li class="play-item">
-                        <a :href="'iina://weblink/?url=' + urlBase" target="_blank">
+                        <a :href="'iina://weblink/?url=' + outPlayUrl" target="_blank">
                             <n-tooltip trigger="hover">
                                 <template #trigger>
                                     <img class="play-icon" src="/images/iina.webp" alt="">
@@ -219,7 +233,7 @@
                         </a>
                     </li>
                     <li class="play-item">
-                        <a :href="'potplayer://' + urlBase" target="_blank">
+                        <a :href="'potplayer://' + outPlayUrl" target="_blank">
                             <n-tooltip trigger="hover">
                                 <template #trigger>
                                     <img class="play-icon" src="/images/potplayer.webp" alt="">
@@ -229,7 +243,7 @@
                         </a>
                     </li>
                     <li class="play-item">
-                        <a :href="'vlc://' + urlBase" target="_blank">
+                        <a :href="'vlc://' + outPlayUrl" target="_blank">
                             <n-tooltip trigger="hover">
                                 <template #trigger>
                                     <img class="play-icon" src="/images/vlc.webp" alt="">
@@ -239,7 +253,7 @@
                         </a>
                     </li>
                     <li class="play-item">
-                        <a :href="'nplayer-' + urlBase" target="_blank">
+                        <a :href="'nplayer-' + outPlayUrl" target="_blank">
                             <n-tooltip trigger="hover">
                                 <template #trigger>
                                     <img class="play-icon" src="/images/nplayer.webp" alt="">
@@ -249,7 +263,7 @@
                         </a>
                     </li>
                     <li class="play-item">
-                        <a :href="'infuse://x-callback-url/play?url=' + urlBase" target="_blank">
+                        <a :href="'infuse://x-callback-url/play?url=' + outPlayUrl" target="_blank">
                             <n-tooltip trigger="hover">
                                 <template #trigger>
                                     <img class="play-icon" src="/images/infuse.webp" alt="">
@@ -259,7 +273,7 @@
                         </a>
                     </li>
                     <li class="play-item">
-                        <a :href="'intent:' + urlBase" target="_blank">
+                        <a :href="'intent:' + outPlayUrl" target="_blank">
                             <n-tooltip trigger="hover">
                                 <template #trigger>
                                     <img class="play-icon" src="/images/mxplayer.webp" alt="">
@@ -269,7 +283,7 @@
                         </a>
                     </li>
                     <li class="play-item">
-                        <a :href="'intent:' + urlBase" target="_blank">
+                        <a :href="'intent:' + outPlayUrl" target="_blank">
                             <n-tooltip trigger="hover">
                                 <template #trigger>
                                     <img class="play-icon" src="/images/mxplayer-pro.webp" alt="">
@@ -281,6 +295,11 @@
                 </ul>
             </n-card>
         </n-modal>
+        <!-- 播放提示 -->
+        <n-modal v-model:show="playTipModal" :mask-closable="false" :close-on-esc="false" :closable="false" preset="dialog"
+            title="提示" content="如果发现视频播放没有字幕，请先使用第三方播放器播放（从右下角3个点那个按钮点开，推荐PC端用Potplayer，移动端用VLC），如果第三方播放器也不显示字幕，请向管理员反馈！"
+            positive-text="我知道了" negative-text="我懂了" @positive-click="handleCheckPlayTipModal"
+            @negative-click="handleCheckPlayTipModal" />
     </div>
 </template>
 <script>
@@ -290,6 +309,7 @@ import flvjs from 'flv.js';
 import Hls from 'hls.js';
 import { getCurrentInstance, onMounted, ref } from "vue";
 import { onBeforeRouteLeave, onBeforeRouteUpdate } from 'vue-router';
+import { handleShowNewBadge } from '@/utils'
 export default {
     name: 'VideoPlayer',
     components: {
@@ -297,6 +317,7 @@ export default {
     },
     setup() {
         const loading = ref(true);
+        const playTipModal = ref(true)
         const rootSubtitle = ref(null);
         const is_ali_open = ref(false);
         const showModal = ref(false);
@@ -311,6 +332,8 @@ export default {
         const id = ref(null);
         const url = ref(null);
         const urlBase = ref(null);
+        const outPlayUrl = ref(null);
+
         const alist_host = ref(null);
         const gallery_type = ref(null);
         const siderRef = ref(null);
@@ -645,7 +668,7 @@ export default {
                         speed.value++;
                         if (speed.value <= urlList.value.length) {
                             art.switchUrl(urlList.value[speed.value - 1].url, urlList.value[speed.value - 1].html);
-                        }
+                        } fetchData
                     }
                 },
             }
@@ -865,14 +888,18 @@ export default {
             initArt();
             fetchData();
         });
+        const showPlayTipModal = proxy.$cookies.get("showPlayTipModal");
+        playTipModal.value = !showPlayTipModal
 
         return {
+            handleShowNewBadge,
             season_id,
             showModal,
             id,
             data,
             like,
             urlBase,
+            outPlayUrl,
             artF,
             error,
             setting,
@@ -882,10 +909,14 @@ export default {
             siderRef,
             videoRef,
             left,
-            season
+            season,
+            playTipModal
         }
     },
     methods: {
+        handleCheckPlayTipModal() {
+            this.$cookies.set('showPlayTipModal', true, 60 * 60 * 24 * 7);
+        },
         getInstance(art) {
             this.artF(art);
             this.art = art;
@@ -902,6 +933,27 @@ export default {
                     speed: speed
                 }
             })
+        },
+        OutsidePlay() {
+            const url = this.urlBase
+            // 处理url里的特殊字符
+            const arr = []
+            let prefix = ''
+            if (url) {
+                const path = url.split('/d/')
+                if (Array.isArray(path)) {
+                    prefix = path[0]
+                    const paths = path[1] ? path[1].split('/') : ''
+                    if (Array.isArray(paths)) {
+                        paths.map((str) => {
+                            arr.push(encodeURIComponent(str))
+                        })
+                    }
+                }
+
+            }
+            this.outPlayUrl = prefix && arr.length > 0 ? `${prefix}/d/${arr.join('/')}` : url;
+            this.showModal = !this.showModal;
         },
     },
 }

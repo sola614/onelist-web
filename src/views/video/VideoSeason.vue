@@ -86,7 +86,7 @@
                             </div>
                             <div class="episode-content">
                                 <div class="episode-name">
-                                    {{ index + 1 }}.
+                                    {{ item.episode_number }}.
                                     {{ item.name }}
                                 </div>
                                 <div class="episode-star">
@@ -347,7 +347,17 @@ export default {
             })
         },
         OutsidePlay(url) {
-            this.url = this.alist_host + url;
+            // 处理url里的特殊字符
+            const arr = []
+            if (url) {
+              const paths = url.split('/')
+              if (Array.isArray(paths)) {
+              paths.map((path)=>{
+                arr.push(encodeURIComponent(path))
+              })
+              }
+            }
+            this.url = this.alist_host + arr.join('/');
             this.showModal = !this.showModal;
         },
         PlayEpisod(speed) {

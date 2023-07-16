@@ -67,7 +67,7 @@
                 </n-form>
                 <template #footer>
                     <n-space justify="end" size="medium">
-                        <n-button @click="Create()" type="info">
+                        <n-button @click="Create()" type="info" :loading="btnLoading">
                             确定
                         </n-button>
                     </n-space>
@@ -97,13 +97,13 @@
                 </n-form>
                 <template #footer>
                     <n-space justify="end" size="medium">
-                        <n-button @click="Delete()" type="warning">
+                        <n-button @click="Delete()" type="warning" :loading="btnLoading">
                             <template #icon>
                                 <i class='bx bx-trash'></i>
                             </template>
                             删除
                         </n-button>
-                        <n-button @click="Updata()" type="info">
+                        <n-button @click="Updata()" type="info" :loading="btnLoading">
                             <template #icon>
                                 <i class='bx bx-save'></i>
                             </template>
@@ -174,6 +174,7 @@ export default defineComponent({
     name: 'UserIndex',
     setup() {
         const loading = ref(true);
+        const btnLoading=ref(false)
         const createModal = ref(false);
         const editModal = ref(false);
         const error = ref(null);
@@ -229,6 +230,7 @@ export default defineComponent({
             reFData,
             error,
             loading,
+            btnLoading,
             page,
             num,
             columns: createColumns({
@@ -247,19 +249,27 @@ export default defineComponent({
     },
     methods: {
         Request(api, data) {
+            if (this.btnLoading) {
+                return
+            }
+            this.btnLoading=true
             this.axios.post(api, data, {
                 headers: {
                     'content-type': 'application/json',
                     'Authorization': this.$cookies.get("Authorization")
                 }
             }).then(res => {
+                this.btnLoading=false
                 if (res.data.code == 200) {
                     this.reFData();
                     this.COMMON.ShowMsg(res.data.msg)
+                    this.editModal=false
+                    this.createModal=false
                 } else {
                     this.COMMON.ShowMsg(res.data.msg)
                 }
             }).catch((error) => {
+                this.btnLoading=false
                this.COMMON.ShowMsg(error);
             });
         },

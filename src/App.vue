@@ -13,7 +13,7 @@
                                             <i class='bx bx-menu'></i>
                                         </n-button>
                                     </div>
-                                    <div @click="Home" class="title">
+                                    <div @click="Home" class="title site-title">
                                         {{ title }}
                                     </div>
                                 </n-space>
@@ -456,6 +456,10 @@ ul li .title,
 
 .title {
     font-size: 1.4em;
+}
+
+.site-title {
+    cursor: pointer;
 }
 
 .content {

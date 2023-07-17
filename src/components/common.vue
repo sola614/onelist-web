@@ -15,12 +15,11 @@ const isMo = /Android|webOS|iPhone|iPad|iPod|BlackBerry/i.test(navigator.userAge
 import Snackbar from 'node-snackbar';
 
 
-function ShowMsg (msg) {
-  console.log(11111111111111, msg);
+function ShowMsg(msg) {
   Snackbar.show({ pos: 'top-center', text: msg, showAction: false });
 }
 
-function initConfig () {
+function initConfig() {
   if (localStorage.getItem("title") != null) {
     title = localStorage.getItem("title")
   }

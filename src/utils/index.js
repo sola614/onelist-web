@@ -29,9 +29,10 @@ export function timeFormat(time, format) {
 export function handleShowNewBadge(time) {
   let flag = false
   if (time) {
-    const date = timeFormat(time, 'YYYY-MM-DD')
-    const nowDate = timeFormat(new Date(), 'YYYY-MM-DD')
-    flag = date === nowDate
+    // 更新24小时内都算新
+    const time2 = new Date(time).getTime()
+    const nowTime = new Date().getTime()
+    flag = time2 + 24 * 60 * 60 * 1000 > nowTime
   }
   return flag
 }

@@ -176,7 +176,7 @@
                                 <template #trigger>
                                     <img class="play-icon" src="/images/vlc.webp" alt="">
                                 </template>
-                                vcl
+                                VLC
                             </n-tooltip>
                         </a>
                     </li>

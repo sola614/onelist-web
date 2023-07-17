@@ -160,8 +160,9 @@
                                     <img v-else loading="lazy" src="/images/not_img.png" alt="">
                                 </div>
                                 <div class="episode-content">
-                                    <div class="episode-name">
-                                        {{ index + 1 }}.
+                                    <div class="episode-name" @click="handlePlay(index + 1)"
+                                        :class="{ 'active': (speed + 1) === item.episode_number }">
+                                        {{ item.episode_number }}.
                                         {{ item.name }}
                                     </div>
                                     <div class="episode-overview">
@@ -189,10 +190,10 @@
                                         :src='COMMON.imgUrl + "/t/p/w220_and_h330_face/" + item.poster_path'>
                                 </router-link>
                                 <div class="view-item-content">
-                                    <div v-if="item.video != null" class="view-item-title">
+                                    <div v-if="item.video != null" class="view-item-title" @click="handleGoVideo(item)">
                                         {{ item.title }}
                                     </div>
-                                    <div v-else class="view-item-title">
+                                    <div v-else class="view-item-title" @click="handleGoVideo(item)">
                                         {{ item.name }}
                                     </div>
                                     <div class="star">
@@ -248,7 +249,7 @@
                                 <template #trigger>
                                     <img class="play-icon" src="/images/vlc.webp" alt="">
                                 </template>
-                                vcl
+                                VLC
                             </n-tooltip>
                         </a>
                     </li>
@@ -369,19 +370,28 @@ export default {
                 tooltip: season.value.name,
                 selector: [],
                 onSelect: function (item, $dom, event) {
+                    console.log(item);
                     localStorage.setItem(`${id.value}_${gallery_type.value}`, item.speed);
                     document.title = gallery_type.value == "tv" ? `${data.value.name}第${item.speed + 1}集` : data.value.title
                     if (is_ali_open.value) {
                         urlBase.value = alist_host.value + item.url
                         OpenVideo(item.url);
                     } else {
-                        urlBase.value = item.url;
-                        art.switchUrl(item.url, item.html);
-                        art.option.id = item.url.replaceAll(alist_host.value, "");
-                        art.on('ready', () => {
-                            art.play();
-                            chunkSubtitles(item.url.replaceAll(alist_host.value, ""));
-                        });
+                        const arr = item.url.split('/')
+                        const str = arr[arr.length - 1]
+                        const spArr = str.match(/S(.*)E(.*)\./)
+                        const ep = spArr[2]
+                        if (ep) {
+                            location.href = `/player?id=${id.value}&gallery_type=${gallery_type.value}&season_id=${season_id.value}&speed=${parseInt(ep)}`
+                        }
+
+                        // urlBase.value = item.url;
+                        // art.switchUrl(item.url, item.html);
+                        // art.option.id = item.url.replaceAll(alist_host.value, "");
+                        // art.on('ready', () => {
+                        //     art.play();
+                        //     chunkSubtitles(item.url.replaceAll(alist_host.value, ""));
+                        // });
                     }
                     return item.html;
                 },
@@ -708,7 +718,7 @@ export default {
                 autoMini: false,
                 screenshot: false,
                 setting: true,
-                loop: true,
+                loop: false,
                 flip: true,
                 playbackRate: true,
                 aspectRatio: true,
@@ -890,7 +900,6 @@ export default {
         });
         const showPlayTipModal = proxy.$cookies.get("showPlayTipModal");
         playTipModal.value = !showPlayTipModal
-
         return {
             handleShowNewBadge,
             season_id,
@@ -910,10 +919,33 @@ export default {
             videoRef,
             left,
             season,
-            playTipModal
+            playTipModal,
+            speed
         }
     },
     methods: {
+        handlePlay(index) {
+            // this.$router.push({
+            //     path: "/player",
+            //     query: {
+            //         id: this.id,
+            //         gallery_type: this.gallery_type,
+            //         season_id: this.season_id,
+            //         speed: speed
+            //     }
+            // })
+            location.href = `/player?id=${this.id}&gallery_type=${this.gallery_type}&season_id=${this.season_id}&speed=${index}`
+        },
+        handleGoVideo(item) {
+            this.$router.push({
+                path: "/video",
+                query: {
+                    id: item.id,
+                    gallery_type: this.gallery_type,
+
+                }
+            })
+        },
         handleCheckPlayTipModal() {
             this.$cookies.set('showPlayTipModal', true, 60 * 60 * 24 * 7);
         },
@@ -1047,6 +1079,11 @@ h1 {
 .view-item-title {
     font-size: 1.2em;
     padding-bottom: 8px;
+    cursor: pointer;
+}
+
+.show-list .view-item-title:hover {
+    color: #2eb4d5;
 }
 
 .card-shows {
@@ -1111,6 +1148,16 @@ h1 {
 .episode-card-item {
     display: flex;
     gap: 10px;
+}
+
+.episode-name {
+    cursor: pointer;
+
+}
+
+.episode-name:hover,
+.episode-name.active {
+    color: #2eb4d5;
 }
 
 .episode-card-list img {

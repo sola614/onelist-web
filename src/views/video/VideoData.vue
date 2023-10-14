@@ -96,7 +96,7 @@
         <div v-if="gallery_type == 'tv'" class="showContainer">
           <div class="show-header">
             <div class="show-title">
-              <h3>季</h3>
+              <h3>季度信息</h3>
             </div>
             <div class="show-header-tool">
               <n-space>
@@ -155,16 +155,17 @@
           <n-scrollbar ref="siderRef" x-scrollable>
             <div style="white-space: nowrap;">
               <div class="show-card-list">
-                <div class="show-card-item" v-for="(item, index) in data.the_persons" :key="index">
+                <div class="show-card-item" v-for="(item, index) in credits" :key="index">
                   <router-link :to="{ path: '/person', query: { id: item.id, } }">
                     <div class="show-img">
-                      <img v-if="item.profile_path.length > 0" loading="lazy"
+                      <img v-if="item.profile_path && item.profile_path.length > 0" loading="lazy"
                         :src='COMMON.imgUrl + "/t/p/w220_and_h330_face/" + item.profile_path' alt="">
                       <img v-else loading="lazy" src="/images/not_person.jpg" alt="">
                     </div>
                   </router-link>
                   <div class="show-name">
-                    {{ item.name }}
+                    <strong>{{ item.name }}</strong>
+                    <p v-if="item.character">{{ item.character }}</p>
                   </div>
                 </div>
               </div>
@@ -340,10 +341,11 @@
 <script>
 import { getCurrentInstance, onMounted, ref } from "vue";
 import { onBeforeRouteUpdate } from 'vue-router';
-import { handleShowNewBadge, handleVideoYear } from '@/utils'
+import { handleShowNewBadge, handleVideoYear, handleGetCreditsById } from '@/utils'
 export default {
   name: 'VideoData',
   setup() {
+    const credits = ref([])
     const show = ref(false);
     const tvId = ref(false);
     const loading = ref(true);
@@ -450,6 +452,9 @@ export default {
 
     onMounted(() => {
       fetchData();
+      handleGetCreditsById(id.value, gallery_type.value).then((res) => {
+        credits.value = res.cast || data.value.the_persons || []
+      })
     });
 
     const reF = () => {
@@ -511,7 +516,8 @@ export default {
           }
           titleModal.value = true;
         }
-      }
+      },
+      credits
     }
   },
   methods: {

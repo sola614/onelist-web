@@ -13,7 +13,7 @@
                                 {{ gallery_type == "tv" ? data.name : data.title }}
                             </div>
                             <div class="season-title">
-                                {{ season != nul ? season.name : "" }}
+                                {{ season != null ? season.name : "" }}
                             </div>
                         </div>
                         <div class="header-right">
@@ -57,17 +57,18 @@
                     <n-scrollbar ref="siderRef" x-scrollable>
                         <div style="white-space: nowrap;">
                             <div class="show-card-list">
-                                <div class="show-card-item" v-for="(item, index) in data.the_persons" :key="index">
+                                <div class="show-card-item" v-for="(item, index) in credits" :key="index">
                                     <router-link :to="{ path: '/person', query: { id: item.id, } }">
                                         <div class="show-img">
-                                            <img v-if="item.profile_path.length > 0" loading="lazy"
+                                            <img v-if="item.profile_path && item.profile_path.length > 0" loading="lazy"
                                                 :src='COMMON.imgUrl + "/t/p/w220_and_h330_face/" + item.profile_path'
                                                 alt="">
                                             <img v-else loading="lazy" src="/images/not_person.jpg" alt="">
                                         </div>
                                     </router-link>
                                     <div class="show-name">
-                                        {{ item.name }}
+                                        <strong>{{ item.name }}</strong>
+                                        <p v-if="item.character">{{ item.character }}</p>
                                     </div>
                                 </div>
                             </div>
@@ -310,7 +311,7 @@ import flvjs from 'flv.js';
 import Hls from 'hls.js';
 import { getCurrentInstance, onMounted, ref } from "vue";
 import { onBeforeRouteLeave, onBeforeRouteUpdate } from 'vue-router';
-import { handleShowNewBadge } from '@/utils'
+import { handleShowNewBadge, handleGetCreditsById } from '@/utils'
 export default {
     name: 'VideoPlayer',
     components: {
@@ -318,6 +319,7 @@ export default {
     },
     setup() {
         const loading = ref(true);
+        const credits = ref([])
         const playTipModal = ref(true)
         const rootSubtitle = ref(null);
         const is_ali_open = ref(false);
@@ -334,7 +336,6 @@ export default {
         const url = ref(null);
         const urlBase = ref(null);
         const outPlayUrl = ref(null);
-
         const alist_host = ref(null);
         const gallery_type = ref(null);
         const siderRef = ref(null);
@@ -897,6 +898,9 @@ export default {
         onMounted(() => {
             initArt();
             fetchData();
+            handleGetCreditsById(id.value, gallery_type.value).then((res) => {
+                credits.value = res.cast || data.value.the_persons || []
+            })
         });
         const showPlayTipModal = proxy.$cookies.get("showPlayTipModal");
         playTipModal.value = !showPlayTipModal
@@ -920,7 +924,8 @@ export default {
             left,
             season,
             playTipModal,
-            speed
+            speed,
+            credits
         }
     },
     methods: {

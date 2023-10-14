@@ -28,6 +28,7 @@ export function timeFormat(time, format) {
 }
 export function handleShowNewBadge(time) {
   let flag = false
+
   if (time) {
     // 更新24小时内都算新
     const time2 = new Date(time).getTime()
@@ -38,4 +39,17 @@ export function handleShowNewBadge(time) {
 }
 export function handleVideoYear(time) {
   return time ? timeFormat(time, 'YYYY') : ''
+}
+
+export function handleGetCreditsById(id, gallery_type = 'tv') {
+  const options = {
+    method: 'GET',
+    headers: {
+      accept: 'application/json',
+      Authorization: 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI3ZTk2NTgxYzM3YjA2ODYwYmI0YjVlZmM0NDZiODM1ZiIsInN1YiI6IjY0YWU5YTY2M2UyZWM4MDEwZGFlMjc2OSIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.-59-V4qNzZ-EsC9e93FpNAKrQJqhvQ_rmPYIP0Y3V5g'
+    }
+  };
+
+  return fetch(`https://api.themoviedb.org/3/${gallery_type}/${id}/credits?language=zh-CN`, options)
+    .then(response => response.json())
 }

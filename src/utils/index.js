@@ -46,7 +46,7 @@ export function handleGetCreditsById(id, gallery_type = 'tv') {
     method: 'GET',
     headers: {
       accept: 'application/json',
-      Authorization: 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI3ZTk2NTgxYzM3YjA2ODYwYmI0YjVlZmM0NDZiODM1ZiIsInN1YiI6IjY0YWU5YTY2M2UyZWM4MDEwZGFlMjc2OSIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.-59-V4qNzZ-EsC9e93FpNAKrQJqhvQ_rmPYIP0Y3V5g'
+      Authorization: 'Bearer XXX'
     }
   };
 

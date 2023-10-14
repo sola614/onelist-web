@@ -8,7 +8,7 @@
 <script type="text/javascript">
 // 定义一些公共的属性和方法
 let title = 'SOLAの媒体库';
-let apiUrl = process.env.NODE_ENV === 'production' ? "" : '';
+let apiUrl = process.env.NODE_ENV === 'production' ? "https://onelist.meaqua.fun" : "https://onelist.meaqua.fun";
 // let imgUrl = "https://image.tmdb.org"
 let imgUrl = "https://tmdb-image-prod.b-cdn.net"
 const isMo = /Android|webOS|iPhone|iPad|iPod|BlackBerry/i.test(navigator.userAgent);

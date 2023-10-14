@@ -46,7 +46,8 @@
                                 <div v-if="item.played" class="view-item-tag count" title="已播放">
                                     <i class='bx bx-check'></i>
                                 </div>
-                                <n-badge value="New" v-if="handleShowNewBadge(item.updated_at)" class="new-badge"></n-badge>
+                                <n-badge value="New" v-if="handleShowNewBadge(item.last_air_date)"
+                                    class="new-badge"></n-badge>
                             </div>
                         </div>
 

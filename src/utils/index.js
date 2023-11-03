@@ -46,7 +46,7 @@ export function handleGetCreditsById(id, gallery_type = 'tv') {
     method: 'GET',
     headers: {
       accept: 'application/json',
-      Authorization: 'Bearer XXX'
+      Authorization: 'Bearer 请自行替换key'
     }
   };
 

@@ -571,6 +571,7 @@ span.button-text {
 .showContainer {
     padding: 14px;
     color: white;
+    width: 80%;
 }
 
 .show-header {
@@ -590,10 +591,15 @@ span.button-text {
     gap: 10px;
     align-items: center;
     justify-content: space-between;
+    /* width: 1200px; */
 }
 
 .episode-card-item>* {
     flex: 1;
+}
+
+.episode-card-item .episode-content {
+    flex: 3;
 }
 
 .episode-title {

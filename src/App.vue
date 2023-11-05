@@ -617,5 +617,15 @@ span.n-avatar {
 .view-item-tag.count+.new-badge {
     margin-top: 0;
 }
+
+.view-card-list .view-item {
+    width: 160px;
+}
+
+.view-item-title {
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+}
 </style>
 

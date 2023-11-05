@@ -803,7 +803,10 @@ export default {
             }).then(res => {
                 if (res.data.code == 200) {
                     data.value = res.data.data;
-                    like.value = res.data.like;
+                    const likeCopy = res.data.like || []
+                    like.value = likeCopy.filter((item) => {
+                        return item.gallery_uid
+                    });
                     document.title = gallery_type.value == "tv" ? `${data.value.name}第${speed.value + 1}集` : data.value.title
                     fetchHost();
                     if (!data.value.played) {

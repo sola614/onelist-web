@@ -64,12 +64,14 @@
                     已播放
                   </span>
                 </button>
-                <button @click="ReNewHeart()" :class="[data.heart ? 'active' : '', 'detailButton', 'circleButton']">
+                <button @click="ReNewHeart()" :class="[data.heart ? 'active' : '', 'detailButton', 'circleButton']"
+                  title="最爱">
                   <span class="button-icon">
                     <i class='bx bxs-heart'></i>
                   </span>
                 </button>
-                <button @click="ReNewStar()" :class="[data.star ? 'active' : '', 'detailButton', 'circleButton']">
+                <button @click="ReNewStar()" :class="[data.star ? 'active' : '', 'detailButton', 'circleButton']"
+                  title="收藏">
                   <span class="button-icon">
                     <i class='bx bxs-star'></i>
                   </span>
@@ -426,7 +428,10 @@ export default {
       }).then(res => {
         if (res.data.code == 200) {
           data.value = res.data.data;
-          like.value = res.data.like;
+          const likeCopy = res.data.like || []
+          like.value = likeCopy.filter((item) => {
+            return item.gallery_uid
+          });
           form.value.data_type = gallery_type.value;
           form.value.data_id = data.value.id;
           backImg.value = proxy.COMMON.imgUrl + "/t/p/w1920_and_h1080_bestv2" + data.value.backdrop_path
@@ -803,6 +808,7 @@ export default {
   line-height: inherit;
   outline: 0 !important;
   margin: 0 auto;
+  cursor: pointer;
 }
 
 .detailButton:hover .button-icon,
@@ -917,6 +923,7 @@ span.button-text {
 .view-card-list .view-item {
   transform: translateY(0) scale(1);
   transition: all 0.2s ease-in-out;
+  width: 160px;
 }
 
 .view-card-list .view-item:hover {

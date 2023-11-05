@@ -62,13 +62,13 @@
                                     </span>
                                 </button>
                                 <button @click="ReNewHeart()"
-                                    :class="[data.heart ? 'active' : '', 'detailButton', 'circleButton']">
+                                    :class="[data.heart ? 'active' : '', 'detailButton', 'circleButton']" title="最爱">
                                     <span class="button-icon">
                                         <i class='bx bxs-heart'></i>
                                     </span>
                                 </button>
                                 <button @click="ReNewStar()"
-                                    :class="[data.star ? 'active' : '', 'detailButton', 'circleButton']">
+                                    :class="[data.star ? 'active' : '', 'detailButton', 'circleButton']" title="收藏">
                                     <span class="button-icon">
                                         <i class='bx bxs-star'></i>
                                     </span>
@@ -88,7 +88,7 @@
                     </div>
                     <div class="episode-card-list">
                         <div class="episode-card-item" v-for="(item, index) in season.episodes" :key="index">
-                            <div @click="ItemPlayer(item, index)" class="episode-img">
+                            <div class="episode-img" @click="PlayEpisod(index + 1)">
                                 <n-tag :color="{ color: '#f0a020', textColor: '#fff', borderColor: '#f0a020' }"
                                     class="date-tag">
                                     {{ item.air_date }}
@@ -98,8 +98,8 @@
                                     alt="">
                             </div>
                             <div class="episode-content">
-                                <div class="episode-name">
-                                    {{ item.episode_number }}.
+                                <div class="episode-name" @click="PlayEpisod(index + 1)">
+                                    {{ item.episode_number }}、
                                     {{ item.name }}
                                 </div>
                                 <div class="episode-star">
@@ -526,6 +526,7 @@ export default {
     line-height: inherit;
     outline: 0 !important;
     margin: 0 auto;
+    cursor: pointer;
 }
 
 .detailButton:hover .button-icon,
@@ -623,6 +624,7 @@ span.button-text {
 
 .episode-img {
     position: relative;
+    cursor: pointer;
 }
 
 .episode-img img {
@@ -639,6 +641,11 @@ span.button-text {
 
 .episode-name {
     font-size: 1.2em;
+    cursor: pointer;
+}
+
+.episode-name:hover {
+    color: #2eb4d5;
 }
 
 .icon-star {

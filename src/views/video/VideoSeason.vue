@@ -571,7 +571,7 @@ span.button-text {
 .showContainer {
     padding: 14px;
     color: white;
-    width: 80%;
+
 }
 
 .show-header {
@@ -595,11 +595,26 @@ span.button-text {
 }
 
 .episode-card-item>* {
+    flex: 2;
+}
+
+.episode-card-item .episode-buttons {
     flex: 1;
 }
 
-.episode-card-item .episode-content {
-    flex: 3;
+
+@media (min-width: 750px) {
+    .showContainer {
+        width: 90%;
+    }
+
+    .episode-card-item .episode-img {
+        flex: 2;
+    }
+
+    .episode-card-item .episode-content {
+        flex: 6;
+    }
 }
 
 .episode-title {

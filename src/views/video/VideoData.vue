@@ -174,7 +174,7 @@
             </div>
           </n-scrollbar>
         </div>
-        <div class="showContainer">
+        <div class="showContainer like-showContainer">
           <div class="show-header">
             <div class="show-title">
               <h3>同类型推荐</h3>

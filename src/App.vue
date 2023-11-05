@@ -618,7 +618,7 @@ span.n-avatar {
     margin-top: 0;
 }
 
-.view-card-list .view-item {
+.like-showContainer .view-item {
     width: 160px;
 }
 

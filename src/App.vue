@@ -264,7 +264,10 @@ export default defineComponent({
                 }
             }).then(res => {
                 if (res.data.code == 200) {
-                    data.value = res.data.data;
+                    const result = res.data.data;
+                    data.value = result.sort((a, b) => {
+                        return a.id - b.id
+                    })
                     setTimeout(() => {
                         initUrlActive();
                     }, 1500);

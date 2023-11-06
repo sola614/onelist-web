@@ -42,7 +42,7 @@
                             </n-space>
                         </template>
                         <img v-if="item.image.length > 0" loading="lazy" class='gallery-img'
-                            :src='item.image.search(/gallery/) != -1 ? COMMON.apiUrl + item.image : COMMON.imgUrl + "/t/p/w355_and_h200_multi_faces" + item.image'>
+                            :src='/http/.test(item.image) ? item.image : item.image.search(/gallery/) != -1 ? COMMON.apiUrl + item.image : COMMON.imgUrl + "/t/p/w355_and_h200_multi_faces" + item.image'>
                         <img v-else loading="lazy" class='gallery-img' src='/images/not_gellery.png'>
                         <template #footer>
                             <div class="gallery-tool">
@@ -289,7 +289,7 @@ export default {
             "title": "",
             "gallery_type": "",
             "is_tv": true,
-            "is_ali_open":false,
+            "is_ali_open": false,
             "gallery_uid": "",
             "image": "",
             "is_alist": false,
@@ -313,7 +313,10 @@ export default {
                 }
             }).then(res => {
                 if (res.data.code == 200) {
-                    data.value = res.data.data;
+                    const result = res.data.data;
+                    data.value = result.sort((a, b) => {
+                        return a.id - b.id
+                    })
                     loading.value = false;
                 } else {
                     proxy.COMMON.ShowMsg(res.data.msg)

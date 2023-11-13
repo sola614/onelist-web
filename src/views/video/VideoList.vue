@@ -3,7 +3,7 @@
   <div v-else class="content">
     <div class="seriesTab">
       <div class="seriesTab-list">
-        <div class="seriesTab-item">
+        <!-- <div class="seriesTab-item">
           {{ pageText }}
         </div>
         <template v-if="num > size">
@@ -17,7 +17,15 @@
               <i class="bx bx-right-arrow-alt"></i>
             </n-button>
           </div>
-        </template>
+        </template> -->
+        <n-pagination
+          v-model:page="page"
+          :page-count="pageCount"
+          @update:page="handlePageChange"
+        />
+        <div class="seriesTab-item">
+          {{ pageText }}
+        </div>
         <div class="seriesTab-item">
           <n-button @click="showSort = !showSort" strong secondary circle>
             <i class="bx bx-align-middle"></i>
@@ -183,7 +191,7 @@ export default {
   setup() {
     const gallery_uid = ref(null);
     const gallery_type = ref(null);
-    const size = ref(null);
+    const pageSize = ref(null);
     const page = ref(null);
     const data = ref(null);
 
@@ -194,12 +202,13 @@ export default {
     const num = ref(null);
     const search = ref(false);
     const mode = ref("updated_at");
-    const order = ref("DESC");
+    const order = ref("desc");
     const genre = ref("");
     const year = ref("");
+    const pageCount = ref(0);
     gallery_uid.value = proxy.$route.query.gallery_uid;
     gallery_type.value = proxy.$route.query.gallery_type;
-    size.value = 48;
+    pageSize.value = 24;
     page.value = 1;
 
     const per_card = ref(8);
@@ -226,14 +235,14 @@ export default {
     }
 
     function initPageText() {
-      let si = size.value;
-      if (num.value < size.value) {
+      let si = pageSize.value;
+      if (num.value < pageSize.value) {
         si = num.value;
       }
       localStorage.setItem("page", page.value);
-      console.log(size.value, num.value);
-      pageText.value = `共${num.value}个番剧`;
-      // (page.value - 1) * size.value + "-" + ((page.value - 1) * size.value + si);
+      pageText.value = `共${num.value}个`;
+      pageCount.value = Math.ceil(num.value / pageSize.value);
+      // (page.value - 1) * pageSize.value + "-" + ((page.value - 1) * pageSize.value + si);
     }
 
     function fetchGenreData() {
@@ -261,9 +270,9 @@ export default {
     }
 
     function fetchData() {
-      let api = `${proxy.COMMON.apiUrl}/v1/api/thetv/sort?gallery_uid=${gallery_uid.value}&mode=${mode.value}&order=${order.value}&page=${page.value}&size=${size.value}`;
+      let api = `${proxy.COMMON.apiUrl}/v1/api/thetv/sort?gallery_uid=${gallery_uid.value}&mode=${mode.value}&order=${order.value}&page=${page.value}&size=${pageSize.value}`;
       if (gallery_type.value == "movie") {
-        api = `${proxy.COMMON.apiUrl}/v1/api/themovie/sort?gallery_uid=${gallery_uid.value}&mode=${mode.value}&order=${order.value}&page=${page.value}&size=${size.value}`;
+        api = `${proxy.COMMON.apiUrl}/v1/api/themovie/sort?gallery_uid=${gallery_uid.value}&mode=${mode.value}&order=${order.value}&page=${page.value}&size=${pageSize.value}`;
       }
       proxy.axios
         .post(
@@ -292,7 +301,7 @@ export default {
     }
 
     function fetchfilterData(id) {
-      let api = `${proxy.COMMON.apiUrl}/v1/api/genre/filte?id=${id}&gallery_uid=${gallery_uid.value}&gallery_type=${gallery_type.value}&mode=${mode.value}&order=${order.value}&page=${page.value}&size=${size.value}`;
+      let api = `${proxy.COMMON.apiUrl}/v1/api/genre/filte?id=${id}&gallery_uid=${gallery_uid.value}&gallery_type=${gallery_type.value}&mode=${mode.value}&order=${order.value}&page=${page.value}&size=${pageSize.value}`;
       proxy.axios
         .post(
           api,
@@ -348,10 +357,11 @@ export default {
       loading,
       error,
       page,
-      size,
+      pageSize,
       num,
       search,
       pageText,
+      pageCount,
       filters,
       genre,
       year,
@@ -415,6 +425,10 @@ export default {
     },
     NextPage() {
       this.page = this.page + 1;
+      this.refresh();
+    },
+    handlePageChange(page) {
+      this.page = page;
       this.refresh();
     },
   },
